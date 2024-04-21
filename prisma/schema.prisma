@@ -1,0 +1,108 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+
+model User {
+  id             String    @id @default(auto()) @map("_id") @db.ObjectId
+  name           String?
+  email          String?   @unique
+  emailVerified  DateTime?
+  image          String?
+  role        Role @default(USER)
+  hashedPassword String?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  accounts     Account[]
+  sessions Session[]
+  kejuaraan Kejuaraan[]
+ }
+
+model Account {
+  id                String  @id @default(auto()) @map("_id") @db.ObjectId
+  userId            String  @db.ObjectId
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.String
+  access_token      String? @db.String
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.String
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String    @id @default(auto()) @map("_id") @db.ObjectId
+  sessionToken String   @unique
+  userId       String  @db.ObjectId
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+
+model Kejuaraan {
+  id           String    @id @default(auto()) @map("_id") @db.ObjectId
+  createdAt DateTime @default(now())
+  startDate DateTime
+  endDate DateTime
+  nama String
+  lokasi String
+  category String
+  userId        String   @db.ObjectId
+  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  penilaian Penilaian[]
+
+}
+
+// model DataKejuaraan {
+//   id           String    @id @default(auto()) @map("_id") @db.ObjectId
+//   userId        String   @db.ObjectId
+//   kejuaraanId   String @db.ObjectId
+//   startDate  
+// }
+
+
+model Penilaian {
+   id              String    @id @default(auto()) @map("_id") @db.ObjectId
+  namaJuri        String
+  namaPesilat     String
+  Pukulan          Float
+  Tendangan       Float
+  Terkaman        Float
+  Bantingan          Float
+  Tangkisan           Float
+  Teguran Float
+  Total Float
+  kejuaraanId     String    @db.ObjectId
+  kejuaraan       Kejuaraan @relation(fields: [kejuaraanId], references: [id])
+  
+}
+
+
+
+
+
+
+enum Role{
+  USER
+  WASIT
+  KETUA
+}
