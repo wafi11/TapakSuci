@@ -1,7 +1,7 @@
 import RegisterClient from "./RegisterClient";
 
 const Register = () => {
-  return <RegisterClient />;
+  return <></>;
 };
 
 export default Register;

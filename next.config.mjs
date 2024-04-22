@@ -17,6 +17,12 @@ const nextConfig = {
       {
         hostname: "images.unsplash.com",
       },
+      {
+        hostname: "news.ums.ac.id",
+      },
+      {
+        hostname: "www.umm.ac.id",
+      },
     ],
   },
 };
